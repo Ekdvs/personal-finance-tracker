@@ -4,6 +4,8 @@ import connectDB from './config/dg.js';
 import authRouter from './routes/authRouter.js';
 import categoriesRouter from './routes/categoriesRouter.js';
 import TransactionsRouter from './routes/transactionsRouter.js';
+import budgetRouter from './routes/budgetRouter.js';
+import dashboardRouter from './routes/dashboardRouter.js';
 
 dotenv.config();
 const app = express();
@@ -19,6 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth",authRouter)
 app.use("/api/categories",categoriesRouter)
 app.use("/api/transactions",TransactionsRouter)
+app.use("/api/budgets", budgetRouter);
+app.use("/api/dashboard", dashboardRouter);
 //test route
 app.get('/', (req, res) => {
     res.send('Hello World!');
