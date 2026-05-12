@@ -3,6 +3,7 @@ import express from 'express';
 import connectDB from './config/dg.js';
 import authRouter from './routes/authRouter.js';
 import categoriesRouter from './routes/categoriesRouter.js';
+import TransactionsRouter from './routes/transactionsRouter.js';
 
 dotenv.config();
 const app = express();
@@ -17,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 //routes
 app.use("/api/auth",authRouter)
 app.use("/api/categories",categoriesRouter)
+app.use("/api/transactions",TransactionsRouter)
 //test route
 app.get('/', (req, res) => {
     res.send('Hello World!');
