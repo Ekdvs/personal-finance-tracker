@@ -6,12 +6,18 @@ import categoriesRouter from './routes/categoriesRouter.js';
 import TransactionsRouter from './routes/transactionsRouter.js';
 import budgetRouter from './routes/budgetRouter.js';
 import dashboardRouter from './routes/dashboardRouter.js';
+import cors from 'cors';
 
 dotenv.config();
 const app = express();
 
 //add cors
-
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 //middleware
 app.use(express.json());

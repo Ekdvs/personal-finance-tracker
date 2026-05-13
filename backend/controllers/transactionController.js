@@ -1,10 +1,11 @@
 import Category from "../models/category.js";
 import Transaction from "../models/transaction.js";
+import Budget from "../models/budget.js";
 
-//create new transaction for user
 export const createTransaction = async (request, response) => {
     try {
         const { title, amount, type, categoryId, note, date } = request.body;
+        const userId = request.userId;
 
         if (!title || !amount || !type || !categoryId) {
             return response.status(400).json({
@@ -14,9 +15,30 @@ export const createTransaction = async (request, response) => {
             });
         }
 
-        // validate category type
-        const category = await Category.findById(categoryId);
-        if (!category || category.type !== type) {
+  
+        if (amount <= 0) {
+            return response.status(400).json({
+                success: false,
+                message: "Amount must be greater than 0",
+                error: true
+            });
+        }
+
+
+        const category = await Category.findOne({
+            _id: categoryId,
+            userId: userId
+        });
+
+        if (!category) {
+            return response.status(400).json({
+                success: false,
+                message: "Category not found or not allowed",
+                error: true
+            });
+        }
+
+        if (category.type !== type) {
             return response.status(400).json({
                 success: false,
                 message: "Invalid category for selected transaction type",
@@ -24,8 +46,9 @@ export const createTransaction = async (request, response) => {
             });
         }
 
+
         const transaction = await Transaction.create({
-            userId: request.userId,
+            userId,
             title,
             amount,
             type,
@@ -33,6 +56,29 @@ export const createTransaction = async (request, response) => {
             note,
             date: date ? new Date(date) : new Date()
         });
+
+
+        if (type === "expense") {
+            const budget = await Budget.findOne({
+                userId,
+                categoryId
+            });
+
+            if (budget) {
+                budget.spentAmount = (budget.spentAmount || 0) + amount;
+
+                
+                const remaining = budget.amount - budget.spentAmount;
+
+                await budget.save();
+
+                
+                if (remaining < 0) {
+                    console.log("⚠️ Budget exceeded for category:", category.name);
+                }
+            }
+        }
+
 
         return response.status(201).json({
             success: true,
@@ -42,6 +88,8 @@ export const createTransaction = async (request, response) => {
         });
 
     } catch (error) {
+        console.error("Transaction Error:", error);
+
         return response.status(500).json({
             success: false,
             message: "Failed to create transaction",

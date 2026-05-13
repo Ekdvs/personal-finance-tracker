@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import User from "../models/user.js";
+import generatedAccesToken from "../utill/generatedAccesToken.js";
 
 //register user
 export const register = async (request, response) => {
@@ -116,6 +117,7 @@ export const login = async (request, response) => {
             }
         )
     } catch (error) {
+
         return response.status(500).json(
             {
                 message: "Internal Server Error",

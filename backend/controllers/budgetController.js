@@ -205,7 +205,8 @@ export const getBudgetProgress = async (req, res) => {
         remaining: budget.amount - spent,
         percentage: Number(percentage.toFixed(2)),
         isExceeded: spent > budget.amount
-      }
+      },
+      message: "Budget progress retrieved successfully"
     });
 
   } catch (error) {
@@ -264,7 +265,9 @@ export const getAllBudgetProgress = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      data: results
+      data: results,
+      message: "All budget progress retrieved successfully",
+      error: false
     });
 
   } catch (error) {
@@ -272,3 +275,4 @@ export const getAllBudgetProgress = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error", error: true });
   }
 };
+
